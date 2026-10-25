@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Collection Record #{{ record.id }} &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-pencil-square text-warning"></i> Edit Collection Entry #{{ record.id }}
+{% endblock %}
+
+{% block page_desc %}
+    Modify milk collection details, adjust shift, quantity, fat percentage, or rate
+{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ url_for('view') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Collections
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-custom shadow-sm">
+            <div class="card-header-clean d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-dark fs-5">Edit Record Details</span>
+                <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-2 rounded-pill">
+                    Record ID: #{{ record.id }}
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('update', id=record.id) }}" method="POST">
+                    <div class="row g-3">
+
+                        <!-- Farmer Selection -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Farmer Name <span class="text-danger">*</span></label>
+                            <select name="farmer_id" class="form-select" required>
+                                {% for f in farmers %}
+                                    <option value="{{ f.farmer_id }}" {% if f.farmer_id == record.farmer_id %}selected{% endif %}>
+                                        {{ f.farmer_name }} ({{ f.village }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Milk Type -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Milk Variety <span class="text-danger">*</span></label>
+                            <select name="milk_type_id" class="form-select" required>
+                                {% for mt in milk_types %}
+                                    <option value="{{ mt.milk_type_id }}" {% if mt.milk_type_id == record.milk_type_id %}selected{% endif %}>
+                                        {{ mt.type_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Shift -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Shift <span class="text-danger">*</span></label>
+                            <select name="shift" class="form-select" required>
+                                <option value="Morning" {% if record.shift == 'Morning' %}selected{% endif %}>🌅 Morning</option>
+                                <option value="Evening" {% if record.shift == 'Evening' %}selected{% endif %}>🌆 Evening</option>
+                            </select>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Collection Date <span class="text-danger">*</span></label>
+                            <input type="date" name="collection_date" class="form-control" value="{{ record.collection_date }}" required>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Quantity (Litres) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0.1" name="quantity" id="quantityInput" class="form-control" value="{{ record.quantity }}" required>
+                        </div>
+
+                        <!-- Fat Percentage -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fat Percentage (%) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.1" min="0" max="15" name="fat_percentage" class="form-control" value="{{ record.fat_percentage }}" required>
+                        </div>
+
+                        <!-- Rate -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Rate per Litre (₹) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" min="1" name="rate" id="rateInput" class="form-control" value="{{ record.rate }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Remarks -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Remarks</label>
+                            <input type="text" name="remarks" class="form-control" value="{{ record.remarks or '' }}">
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                        <a href="{{ url_for('view') }}" class="btn btn-light border px-4">Cancel</a>
+                        <button type="submit" class="btn btn-warning px-4 fw-semibold">
+                            <i class="bi bi-check2-circle me-1"></i> Update Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

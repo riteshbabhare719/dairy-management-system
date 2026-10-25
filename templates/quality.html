@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Quality Tests &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-shield-check text-success"></i> Milk Quality Testing Lab
+{% endblock %}
+
+{% block page_desc %}
+    Analytical quality assessment of milk collections: Fat %, Solid-Not-Fat (SNF) %, CLR, Temperature, and Acceptance status
+{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ url_for('view') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-droplet me-1"></i> View Collections
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom">
+    <div class="card-header-clean d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill">
+                {{ tests|length }} Lab Tests Conducted
+            </span>
+        </div>
+        <div class="text-muted small">
+            Standard Compliance: FSSAI / NDDB Benchmarks
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th># Test ID</th>
+                    <th>Farmer Name</th>
+                    <th>Intake Batch</th>
+                    <th>Fat %</th>
+                    <th>SNF %</th>
+                    <th>CLR Reading</th>
+                    <th>Temp (°C)</th>
+                    <th>Quality Inspector</th>
+                    <th>Test Date</th>
+                    <th class="text-center">Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tests %}
+                <tr>
+                    <td class="fw-semibold text-muted">#LAB-{{ t.test_id }}</td>
+                    <td class="fw-bold text-dark">{{ t.farmer_name }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            Col #{{ t.collection_id }} &bull; {{ t.shift }} ({{ t.quantity }}L)
+                        </span>
+                    </td>
+                    <td class="fw-semibold">{{ t.fat_pct }}%</td>
+                    <td>{{ t.snf_pct }}%</td>
+                    <td>{{ t.clr }}</td>
+                    <td>{{ t.temperature_c }}°C</td>
+                    <td class="text-muted small">
+                        <i class="bi bi-person-check text-primary me-1"></i>{{ t.tested_by }}
+                    </td>
+                    <td class="text-muted small">{{ t.test_date }}</td>
+                    <td class="text-center">
+                        {% if t.result == 'Pass' %}
+                            <span class="badge badge-soft-success px-3 py-1"><i class="bi bi-check-circle-fill me-1"></i>Pass</span>
+                        {% elif t.result == 'Fail' %}
+                            <span class="badge badge-soft-danger px-3 py-1"><i class="bi bi-x-circle-fill me-1"></i>Fail</span>
+                        {% else %}
+                            <span class="badge badge-soft-warning px-3 py-1"><i class="bi bi-arrow-repeat me-1"></i>Retest</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="10" class="text-center text-muted py-5">
+                        <i class="bi bi-shield-x fs-1 d-block mb-2 text-secondary"></i>
+                        No quality laboratory test records logged.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

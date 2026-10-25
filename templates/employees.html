@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dairy Staff &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-person-badge-fill text-secondary"></i> Cooperative Staff & Employees
+{% endblock %}
+
+{% block page_desc %}
+    Dairy collection center supervisors, lab testers, accountants, field officers, and drivers
+{% endblock %}
+
+{% block page_actions %}
+    <span class="badge bg-secondary-subtle text-secondary-emphasis fs-6 px-3 py-2 border border-secondary-subtle">
+        Total Staff: <strong>{{ employees|length }}</strong>
+    </span>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom">
+    <div class="card-header-clean d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary-subtle text-secondary fw-bold px-3 py-2 rounded-pill">
+                {{ employees|length }} Active Personnel
+            </span>
+        </div>
+        <div class="text-muted small">
+            Payroll and operational responsibilities
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th># Emp ID</th>
+                    <th>Staff Name</th>
+                    <th>Assigned Role</th>
+                    <th>Phone Contact</th>
+                    <th>Monthly Salary</th>
+                    <th>Join Date</th>
+                    <th class="text-center">Employment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in employees %}
+                <tr>
+                    <td class="fw-semibold text-muted">#EMP-{{ e.emp_id }}</td>
+                    <td class="fw-bold text-dark">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-secondary-subtle text-secondary rounded-circle d-flex align-items-center justify-content-center" style="width:34px; height:34px;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <span>{{ e.emp_name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if 'Manager' in e.role or 'Supervisor' in e.role %}
+                            <span class="badge badge-soft-primary"><i class="bi bi-award me-1"></i>{{ e.role }}</span>
+                        {% elif 'Tester' in e.role or 'Lab' in e.role %}
+                            <span class="badge badge-soft-info"><i class="bi bi-shield-check me-1"></i>{{ e.role }}</span>
+                        {% elif 'Accountant' in e.role %}
+                            <span class="badge badge-soft-success"><i class="bi bi-calculator me-1"></i>{{ e.role }}</span>
+                        {% elif 'Driver' in e.role %}
+                            <span class="badge badge-soft-warning"><i class="bi bi-truck me-1"></i>{{ e.role }}</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark border">{{ e.role }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="tel:{{ e.phone }}" class="text-decoration-none text-muted">
+                            <i class="bi bi-telephone text-success me-1"></i>{{ e.phone }}
+                        </a>
+                    </td>
+                    <td class="fw-bold text-dark">₹{{ "%.2f"|format(e.salary|float) }}</td>
+                    <td class="text-muted small">{{ e.join_date }}</td>
+                    <td class="text-center">
+                        {% if e.is_active %}
+                            <span class="badge badge-soft-success px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i>Active</span>
+                        {% else %}
+                            <span class="badge badge-soft-danger px-2 py-1"><i class="bi bi-x-circle-fill me-1"></i>Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-person-x fs-1 d-block mb-2 text-secondary"></i>
+                        No employee profiles logged.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

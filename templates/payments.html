@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Farmer Payments &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-cash-stack text-success"></i> Farmer Payouts & Disbursements
+{% endblock %}
+
+{% block page_desc %}
+    Settlement cycles, payment periods, disbursed amounts, and transaction payment channels
+{% endblock %}
+
+{% block page_actions %}
+    <div class="badge bg-success-subtle text-success fs-6 px-3 py-2 border border-success-subtle">
+        Total Disbursed: <strong>₹{{ "%.2f"|format(total_paid|float) }}</strong>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom">
+    <div class="card-header-clean d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill">
+                {{ payments|length }} Disbursed Payments
+            </span>
+        </div>
+        <div class="text-muted small">
+            Bank transfers, UPI, and cash transactions recorded in PostgreSQL
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th># Pay ID</th>
+                    <th>Farmer Recipient</th>
+                    <th>Village</th>
+                    <th>Billing Period</th>
+                    <th>Amount Paid</th>
+                    <th>Disbursement Date</th>
+                    <th>Payment Mode</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in payments %}
+                <tr>
+                    <td class="fw-semibold text-muted">#PAY-{{ p.payment_id }}</td>
+                    <td class="fw-bold text-dark">{{ p.farmer_name }}</td>
+                    <td class="text-muted small">{{ p.village }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            <i class="bi bi-calendar-range text-primary me-1"></i>
+                            {{ p.period_from }} &rarr; {{ p.period_to }}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-success fs-6">₹{{ "%.2f"|format(p.amount_paid|float) }}</td>
+                    <td class="text-muted small">{{ p.payment_date }}</td>
+                    <td>
+                        {% if p.payment_mode == 'Bank Transfer' %}
+                            <span class="badge badge-soft-primary"><i class="bi bi-bank me-1"></i>Bank Transfer</span>
+                        {% elif p.payment_mode == 'UPI' %}
+                            <span class="badge badge-soft-info"><i class="bi bi-phone me-1"></i>UPI</span>
+                        {% else %}
+                            <span class="badge badge-soft-warning"><i class="bi bi-cash me-1"></i>Cash</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <span class="badge badge-soft-success px-3 py-1">
+                            <i class="bi bi-check-circle-fill me-1"></i>Disbursed
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-5">
+                        <i class="bi bi-credit-card fs-1 d-block mb-2 text-secondary"></i>
+                        No payment disbursement logs recorded.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

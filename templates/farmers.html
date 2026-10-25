@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Farmers Directory &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-people-fill text-success"></i> Farmers Directory
+{% endblock %}
+
+{% block page_desc %}
+    Active farmer accounts, contact numbers, villages, total milk supplied, and cumulative earnings
+{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ url_for('show') }}" class="btn btn-brand">
+        <i class="bi bi-droplet me-1"></i> Add Milk for Farmer
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom">
+    <div class="card-header-clean d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill">
+                {{ farmers|length }} Registered Farmers
+            </span>
+        </div>
+        <div class="text-muted small">
+            Direct farmer partners in the cooperative network
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th># ID</th>
+                    <th>Farmer Name</th>
+                    <th>Contact Phone</th>
+                    <th>Village / Location</th>
+                    <th>Join Date</th>
+                    <th>Total Collections</th>
+                    <th>Total Litres</th>
+                    <th>Total Revenue</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in farmers %}
+                <tr>
+                    <td class="fw-semibold text-muted">#{{ f.farmer_id }}</td>
+                    <td class="fw-bold text-dark">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width:34px; height:34px;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <span>{{ f.farmer_name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="tel:{{ f.phone }}" class="text-decoration-none text-muted">
+                            <i class="bi bi-telephone text-success me-1"></i>{{ f.phone }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            <i class="bi bi-geo-alt me-1 text-danger"></i>{{ f.village }}
+                        </span>
+                    </td>
+                    <td class="text-muted small">{{ f.join_date }}</td>
+                    <td>
+                        <span class="badge badge-soft-primary px-3 py-1 rounded-pill">
+                            {{ f.total_collections }} sessions
+                        </span>
+                    </td>
+                    <td class="fw-semibold">{{ "%.1f"|format(f.total_litres|float) }} L</td>
+                    <td class="fw-bold text-success fs-6">₹{{ "%.2f"|format(f.total_revenue|float) }}</td>
+                    <td class="text-center">
+                        {% if f.is_active %}
+                            <span class="badge badge-soft-success px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i>Active</span>
+                        {% else %}
+                            <span class="badge badge-soft-danger px-2 py-1"><i class="bi bi-x-circle-fill me-1"></i>Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-5">
+                        <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
+                        No farmer profiles registered in the database.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

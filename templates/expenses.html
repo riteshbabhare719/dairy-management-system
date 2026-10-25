@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Operational Expenses &bull; Dairy Management{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-wallet2 text-danger"></i> Cooperative Expenses & Overheads
+{% endblock %}
+
+{% block page_desc %}
+    Expenditure tracking for fuel, vehicle maintenance, testing chemicals, staff wages, and utilities
+{% endblock %}
+
+{% block page_actions %}
+    <div class="badge bg-danger-subtle text-danger fs-6 px-3 py-2 border border-danger-subtle">
+        Total Expenses: <strong>₹{{ "%.2f"|format(total_expense|float) }}</strong>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom">
+    <div class="card-header-clean d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-danger-subtle text-danger fw-bold px-3 py-2 rounded-pill">
+                {{ expenses|length }} Recorded Expenses
+            </span>
+        </div>
+        <div class="text-muted small">
+            Cost audits and cooperative expenditure ledger
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th># Exp ID</th>
+                    <th>Expense Category</th>
+                    <th>Description</th>
+                    <th>Paid To / Vendor</th>
+                    <th>Payment Mode</th>
+                    <th>Expense Date</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ex in expenses %}
+                <tr>
+                    <td class="fw-semibold text-muted">#EXP-{{ ex.expense_id }}</td>
+                    <td>
+                        {% if 'Fuel' in ex.category %}
+                            <span class="badge badge-soft-warning"><i class="bi bi-fuel-pump me-1"></i>{{ ex.category }}</span>
+                        {% elif 'Maintenance' in ex.category or 'Repair' in ex.category %}
+                            <span class="badge badge-soft-danger"><i class="bi bi-tools me-1"></i>{{ ex.category }}</span>
+                        {% elif 'Salaries' in ex.category or 'Wages' in ex.category %}
+                            <span class="badge badge-soft-primary"><i class="bi bi-cash me-1"></i>{{ ex.category }}</span>
+                        {% elif 'Chemicals' in ex.category or 'Lab' in ex.category %}
+                            <span class="badge badge-soft-info"><i class="bi bi-eyedropper me-1"></i>{{ ex.category }}</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark border">{{ ex.category }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small" style="max-width: 260px;">{{ ex.description }}</td>
+                    <td class="fw-semibold text-dark">{{ ex.paid_to }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                            {{ ex.payment_mode }}
+                        </span>
+                    </td>
+                    <td class="text-muted small">{{ ex.expense_date }}</td>
+                    <td class="text-end fw-bold text-danger fs-6">₹{{ "%.2f"|format(ex.amount|float) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-wallet fs-1 d-block mb-2 text-secondary"></i>
+                        No operational expenses entered.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <th colspan="6" class="text-end text-uppercase fw-bold text-muted small">Total Operating Expenditure:</th>
+                    <th class="text-end fs-5 text-danger fw-bold">₹{{ "%.2f"|format(total_expense|float) }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
